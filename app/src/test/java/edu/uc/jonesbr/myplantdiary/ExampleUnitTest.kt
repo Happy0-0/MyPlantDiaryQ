@@ -31,4 +31,8 @@ class ExampleUnitTest {
     fun addFiveAndThree_equalsEight() {
         assertEquals(6, 5 + 3)
     }
+    fun confirmEasterRedBudOuputsEasternRedBud () {
+        var plant:Plant = Plant("Cercis", "canadesis", " Eastern Redbud")
+        assertEquals("Eastern Redbud",plant.toString());
+    }
 }
