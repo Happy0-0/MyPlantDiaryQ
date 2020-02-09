@@ -36,7 +36,7 @@ class PlantDataUnitTest {
     fun searchForRedbud_returnsRedbud() {
         givenAFeedOfMockedPlantDataAreAvailable()
         whenSearchForRedbud()
-        thenResultContainsEasternsRedbud()
+        thenResultContainsEasternRedbud()
     }
 
     private fun givenAFeedOfMockedPlantDataAreAvailable() {
@@ -55,43 +55,47 @@ class PlantDataUnitTest {
         var whiteOak = Plant("Cercis", "canadesis", "Eastern Redbud")
         allPlants.add(whiteOak)
         allPlantsLiveData.postValue(allPlants)
-        every {plantService.fetchPlants(any<String>())} returns allPlantsLiveData
+        every {plantService.fetchPlants(or("Redbud", "Quercus"))} returns allPlantsLiveData
+        every {plantService.fetchPlants(not(or("Redbud", "Quercus")))} returns MutableLiveData<ArrayList<Plant>>()
         mvm.plantService = plantService
     }
 
     private fun whenSearchForRedbud() {
         mvm.fetchPlants("redbud")
     }
-
-    private fun thenResultContainsEasternsRedbud() {
-        var redbudFound = false;
+    @Test
+    fun thenResultContainsEasternRedbud() {
+        var redbudFound = false
         mvm.plants.observeForever {
-            //here is where we do the observing
+            // /here is where we do the observing
             assertNotNull(it)
             assertTrue(it.size > 0)
-            it.forEach{
-                if(it.genus == "Cercis" && it.species == "canadensis" && it.common.contains("Eastern Redbud")) {
+            it.forEach {
+                if (it.genus == "Cercis" && it.species == "canadensis" && it.common.contains("Eastern Redbud")) {
                     redbudFound = true
                 }
             }
         }
         assertTrue(redbudFound)
+    }
 
-        fun whenISearchForGarbage() {
-            mvm.fetchPlants("sklujapouetllkjsdau")
-        }
+    @Test
+    fun searchForGarbage_returnsNothing() {
+        givenAFeedOfMockedPlantDataAreAvailable()
+        whenISearchForGarbage()
+        thenIGetZeroResults()
 
-        fun thenIGetZeroResults() {
-            mvm.plants.observeForever {
-                assertEquals(0, it.size)
-            }
-        }
+    }
 
-        @Test
-        fun searchForGarbage_returnsNothing() {
-            givenAFeedOfMockedPlantDataAreAvailable()
-            whenISearchForGarbage()
-            thenIGetZeroResults()
+    private fun whenISearchForGarbage() {
+        mvm.fetchPlants("sklujapouetllkjsdau")
+
+    }
+
+    private fun thenIGetZeroResults() {
+        mvm.plants.observeForever {
+            assertEquals(0, it.size)
         }
     }
+
 }
