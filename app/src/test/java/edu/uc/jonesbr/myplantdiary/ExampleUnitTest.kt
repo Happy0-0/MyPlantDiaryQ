@@ -14,4 +14,17 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
     }
+
+    @Test
+    fun addition_isNotCorrect() {
+        assertEquals(3, 1 + 2)
+    }
+
+    fun addTwoAndThree_equalsFive() {
+        assertEquals(5, 2 + 3)
+    }
+
+    fun addTwoAndThree_equalsSix() {
+        assertEquals(6, 3 + 3)
+    }
 }
