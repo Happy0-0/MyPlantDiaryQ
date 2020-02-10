@@ -39,12 +39,12 @@ class PlantDataUnitTest {
         thenResultContainsEasternRedbud()
     }
 
-    private fun givenAFeedOfMockedPlantDataAreAvailable() {
+     fun givenAFeedOfMockedPlantDataAreAvailable() {
         mvm = MainViewModel()
         createMockData()
     }
 
-    private fun createMockData() {
+     fun createMockData() {
         var allPlantsLiveData = MutableLiveData<ArrayList<Plant>>()
         var allPlants = ArrayList<Plant>()
         //create and add plants to our collection
@@ -56,16 +56,16 @@ class PlantDataUnitTest {
         allPlants.add(whiteOak)
         allPlantsLiveData.postValue(allPlants)
         every {plantService.fetchPlants(or("Redbud", "Quercus"))} returns allPlantsLiveData
-        every {plantService.fetchPlants(not(or("Redbud", "Quercus")))} returns MutableLiveData<ArrayList<Plant>>()
+        every {plantService.fetchPlants(not(or("Redbud", "Quercus")))} returns MutableLiveData()
         mvm.plantService = plantService
     }
 
     private fun whenSearchForRedbud() {
         mvm.fetchPlants("redbud")
     }
-    @Test
-    fun thenResultContainsEasternRedbud() {
-        var redbudFound = false
+
+    private fun thenResultContainsEasternRedbud() {
+        var redbudFound = false;
         mvm.plants.observeForever {
             // /here is where we do the observing
             assertNotNull(it)
@@ -75,8 +75,8 @@ class PlantDataUnitTest {
                     redbudFound = true
                 }
             }
+            assertTrue(redbudFound)
         }
-        assertTrue(redbudFound)
     }
 
     @Test
