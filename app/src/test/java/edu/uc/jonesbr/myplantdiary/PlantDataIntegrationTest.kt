@@ -13,23 +13,24 @@ import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.rules.TestRule
 
+
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
-class PlantDataUnitTest {
+class PlantDataIntegrationTest {
 
     @get:Rule
-    var rule: TestRule = InstantTaskExecutorRule()
-    lateinit var mvm: MainViewModel
+    var rule: TestRule =  InstantTaskExecutorRule()
+    lateinit var mvm:MainViewModel
 
     var plantService = mockk<PlantService>()
 
     @Test
-    fun confirmEasterRedBudOuputsEasternRedBud () {
+    fun confirmEasternRedbud_outputsEasternRedbud () {
         var plant: Plant = Plant("Cercis", "canadesis", "Eastern Redbud")
-        assertEquals("Eastern Redbud",plant.toString());
+        assertEquals("Eastern Redbud", plant.toString());
     }
 
     @Test
@@ -37,18 +38,16 @@ class PlantDataUnitTest {
         givenAFeedOfPlantDataAreAvailable()
         whenSearchForRedbud()
         thenResultContainsEasternRedbud()
-
     }
 
-     fun givenAFeedOfPlantDataAreAvailable() {
+
+    private fun givenAFeedOfPlantDataAreAvailable() {
         mvm = MainViewModel()
-
     }
-
 
 
     private fun whenSearchForRedbud() {
-        mvm.fetchPlants("redbud")
+        mvm.fetchPlants("Redbud")
     }
 
     private fun thenResultContainsEasternRedbud() {
@@ -64,6 +63,7 @@ class PlantDataUnitTest {
             }
             assertTrue(redbudFound)
         }
+
     }
 
     @Test
