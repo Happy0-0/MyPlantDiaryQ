@@ -24,7 +24,7 @@ class PlantDataUnitTest {
     var rule: TestRule = InstantTaskExecutorRule()
     lateinit var mvm: MainViewModel
 
-    var plantService = mockk<PlantService>()
+
 
     @Test
     fun confirmEasterRedBudOuputsEasternRedBud () {
