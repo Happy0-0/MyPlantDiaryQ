@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1004217407648",
+    "firebase_url": "https://my-plant-diary-q-599d9.firebaseio.com",
+    "project_id": "my-plant-diary-q-599d9",
+    "storage_bucket": "my-plant-diary-q-599d9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1004217407648:android:fc35943f1daef42b4ad1c5",
+        "android_client_info": {
+          "package_name": "edu.uc.jonesbr.myplantdiary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1004217407648-p9lbvgj6ihf9bpi9uprv2eqtcfob2jj3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiNbBqS8G8FjjxhduP6V-xDddiscTbCn4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1004217407648-p9lbvgj6ihf9bpi9uprv2eqtcfob2jj3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
