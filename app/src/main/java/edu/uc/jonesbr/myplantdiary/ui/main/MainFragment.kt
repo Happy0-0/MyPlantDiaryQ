@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import edu.uc.jonesbr.myplantdiary.R
+import edu.uc.jonesbr.myplantdiary.dto.Plant
 import edu.uc.jonesbr.myplantdiary.dto.Specimen
 import kotlinx.android.synthetic.main.main_fragment.*
 import java.io.File
@@ -35,6 +36,7 @@ class MainFragment : Fragment() {
     private val CAMERA_PERMISSION_REQUEST_CODE = 1997
     private val LOCATION_PERMISSION_REQUEST_CODE = 2000
     private lateinit var currentPhotoPath: String
+    private var _plantId = 0
 
     companion object {
         fun newInstance() = MainFragment()
@@ -56,6 +58,13 @@ class MainFragment : Fragment() {
         viewModel.plants.observe(this, Observer {
                 plants -> actPlantName.setAdapter(ArrayAdapter(context!!, R.layout.support_simple_spinner_dropdown_item, plants))
         })
+        viewModel.specimens.observe(this, Observer{
+            specimens -> spnSpecimens.setAdapter(ArrayAdapter(context!!, R.layout.support_simple_spinner_dropdown_item, specimens))
+        })
+        actPlantName.setOnItemClickListener { parent, view, position, id ->
+            var selectedPlant = parent.getItemAtPosition(position) as Plant
+            _plantId = selectedPlant.plantId
+        }
         btnTakePhoto.setOnClickListener {
             prepTakePhoto()
         }
@@ -75,8 +84,7 @@ class MainFragment : Fragment() {
             plantName = actPlantName.text.toString()
             description = txtDescription.text.toString()
             datePlanted = txtDatePlanted.text.toString()
-
-            //TODO save this object.
+            plantId = _plantId
 
         }
         viewModel.save(specimen)
