@@ -4,11 +4,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import edu.uc.jonesbr.myplantdiary.dto.Plant
 import edu.uc.jonesbr.myplantdiary.service.PlantService
 import edu.uc.jonesbr.myplantdiary.ui.main.MainViewModel
-import io.mockk.confirmVerified
 import io.mockk.mockk
-import io.mockk.verify
 import org.junit.Test
-
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.rules.TestRule

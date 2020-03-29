@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.net.Uri
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.os.Environment
@@ -19,14 +20,18 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
+import com.firebase.ui.auth.AuthUI
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import edu.uc.jonesbr.myplantdiary.R
+import edu.uc.jonesbr.myplantdiary.dto.Photo
 import edu.uc.jonesbr.myplantdiary.dto.Plant
 import edu.uc.jonesbr.myplantdiary.dto.Specimen
 import kotlinx.android.synthetic.main.main_fragment.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.jar.Pack200
+import kotlin.collections.ArrayList
 
 class MainFragment : Fragment() {
 
@@ -35,8 +40,12 @@ class MainFragment : Fragment() {
     private val CAMERA_REQUEST_CODE: Int = 1998
     private val CAMERA_PERMISSION_REQUEST_CODE = 1997
     private val LOCATION_PERMISSION_REQUEST_CODE = 2000
+    private val AUTH_REQUEST_CODE = 2002
     private lateinit var currentPhotoPath: String
     private var _plantId = 0
+    private var user : FirebaseUser? = null
+    private var photos : ArrayList<Photo> = ArrayList<Photo>()
+    private var photoURI : Uri? = null
 
     companion object {
         fun newInstance() = MainFragment()
@@ -69,7 +78,7 @@ class MainFragment : Fragment() {
             prepTakePhoto()
         }
         btnLogon.setOnClickListener {
-            prepOpenImageGallery()
+            logon()
         }
         prepRequestLocationUpdates()
         btnSave.setOnClickListener {
@@ -77,7 +86,21 @@ class MainFragment : Fragment() {
         }
     }
 
+    private fun logon() {
+        var providers = arrayListOf(
+            AuthUI.IdpConfig.EmailBuilder().build()
+        )
+        startActivityForResult(
+            AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build(), AUTH_REQUEST_CODE
+        )
+    }
+
     private fun saveSpecimen() {
+        if (user == null) {
+            logon()
+        }
+        user ?: return
+
         var specimen = Specimen().apply {
             latitude = lblLatitudeValue.text.toString()
             longitude = lblLongitudeValue.text.toString()
@@ -85,9 +108,12 @@ class MainFragment : Fragment() {
             description = txtDescription.text.toString()
             datePlanted = txtDatePlanted.text.toString()
             plantId = _plantId
-
         }
-        viewModel.save(specimen)
+        viewModel.save(specimen, photos, user!!)
+
+        specimen = Specimen()
+        photos = ArrayList<Photo>()
+
     }
 
     private fun prepRequestLocationUpdates() {
@@ -161,8 +187,8 @@ class MainFragment : Fragment() {
                 // if we are here, we have a valid intent.
                 val photoFile:File = createImageFile()
                 photoFile?.also {
-                    val photoURI = FileProvider.getUriForFile(activity!!.applicationContext, "com.myplantdiary.android.fileprovider", it)
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoFile)
+                    photoURI = FileProvider.getUriForFile(activity!!.applicationContext, "com.myplantdiary.android.fileprovider", it)
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                     startActivityForResult(takePictureIntent, SAVE_IMAGE_REQUEST_CODE)
                 }
             }
@@ -178,6 +204,8 @@ class MainFragment : Fragment() {
                 imgPlant.setImageBitmap(imageBitmap)
             } else if (requestCode == SAVE_IMAGE_REQUEST_CODE) {
                 Toast.makeText(context, "Image Saved", Toast.LENGTH_LONG).show()
+                var photo = Photo(localUri = photoURI.toString())
+                photos.add(photo)
             } else if (requestCode == IMAGE_GALLERY_REQUEST_CODE) {
                 if (data != null && data.data != null) {
                     val image = data.data
@@ -186,6 +214,8 @@ class MainFragment : Fragment() {
                     imgPlant.setImageBitmap(bitmap)
 
                 }
+            } else if (requestCode == AUTH_REQUEST_CODE) {
+                user = FirebaseAuth.getInstance().currentUser
             }
         }
     }
